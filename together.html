@@ -48,7 +48,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 button.on{background:var(--stroke);color:var(--paper);border-color:var(--stroke)}
 
 .board{display:grid;gap:4px 10px;grid-template-columns:repeat(var(--cols,2),minmax(0,1fr));
-  user-select:none;-webkit-user-select:none;touch-action:none}
+  user-select:none;-webkit-user-select:none;touch-action:manipulation}
 .ch{position:relative;min-width:0}
 .ch svg{display:block;width:100%;height:auto;max-width:100%}
 .ch .cnt{position:absolute;right:2%;bottom:2%;font-size:.66rem;color:var(--muted);font-variant-numeric:tabular-nums;background:var(--bg);padding:1px 5px;border-radius:99px}
@@ -150,6 +150,7 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
         <div class="sub">백만편 창제표 · 300시간 · <span id="word">청년약동</span></div>
       </div>
       <div class="btns">
+        <button id="big" type="button" aria-pressed="false">크게 보기</button>
         <button id="copy" type="button">링크 복사</button>
         <button id="undo" type="button" title="내가 마지막으로 칠한 칸 되돌리기">되돌리기</button>
         <button id="adminBtn" type="button" aria-expanded="false">관리</button>
@@ -216,7 +217,7 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
       <div class="people" id="people"></div>
     </div>
     <div class="me" id="meRow" hidden>내 닉네임 <b id="meName"></b><button class="linkbtn" id="nickChange" type="button">바꾸기</button></div>
-    <div class="hint">칸을 누르면 칠해지고, 다시 누르면 지워져요. 꾹 누른 채 끌면 여러 칸을 한 번에 칠할 수 있어요.</div>
+    <div class="hint">칸을 누르면 칠해지고, 다시 누르면 지워져요. 컴퓨터에서는 누른 채 끌어서 여러 칸을 칠할 수 있어요. 폰에서는 두 손가락으로 확대하거나 <b>크게 보기</b>를 눌러보세요.</div>
   </section>
 
   <div class="toast" id="toast" hidden></div>
@@ -303,7 +304,8 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
   $('channel').hidden=false;
   $('chanName').textContent=NAME;
 
-  let cfg={...DEFAULT},nick=ls.get('cj:nick')||'',isAdmin=false;
+  let cfg={...DEFAULT},nick=ls.get('cj:nick')||'',isAdmin=false,big=ls.get('cj:big')==='1';
+  const viewCols=()=>big?1:cfg.cols;
   let filled=new Map(),total=0,history=[],cellsRef=null,curBoard='',built='';
 
   function banner(m){$('banner').textContent=m||'';$('banner').hidden=!m}
@@ -366,10 +368,10 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
     const chars=[...cfg.text.replace(/\s/g,'')].slice(0,6);
     if(!chars.length)chars.push('청');
     $('word').textContent=chars.join('');
-    const sig=chars.join('')+'|'+cfg.cols;
+    const sig=chars.join('')+'|'+viewCols();
     if(sig===built)return;built=sig;
     const board=$('board');board.innerHTML='';
-    board.style.setProperty('--cols',Math.min(cfg.cols,chars.length));
+    board.style.setProperty('--cols',Math.min(viewCols(),chars.length));
     const n=Math.max(12,Math.round(Math.sqrt(TOTAL/0.42/chars.length)));
     const TH=0.3;
     const count=cv=>cv.reduce((a,c)=>a+c.flat().filter(v=>v>=TH).length,0);
@@ -485,11 +487,29 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
     e.classList.toggle('f',mode);stroke.push(i);writeCell(i,mode);
   }
   const board=$('board');
+  let tap=null;
+  function needNick(){if(nick)return false;$('nickForm').hidden=false;$('nickIn').focus();toast('닉네임을 먼저 정해주세요.');return true}
   board.addEventListener('pointerdown',e=>{
     const c=e.target.closest('rect.c');if(!c)return;
-    if(!nick){$('nickForm').hidden=false;$('nickIn').focus();toast('닉네임을 먼저 정해주세요.');return}
+    if(e.pointerType==='touch'){tap={c,x:e.clientX,y:e.clientY,id:e.pointerId};return}
+    if(needNick())return;
     e.preventDefault();painting=true;mode=!filled.has(+c.dataset.i);stroke=[];setCell(c);tally();
   });
+  board.addEventListener('pointerup',e=>{
+    if(!tap||e.pointerId!==tap.id)return;
+    const t=tap;tap=null;
+    if(Math.hypot(e.clientX-t.x,e.clientY-t.y)>10||needNick())return;
+    mode=!filled.has(+t.c.dataset.i);stroke=[];setCell(t.c);
+    history.push({board:curBoard,mode,cells:stroke});if(history.length>50)history.shift();
+    paint();
+  });
+  board.addEventListener('pointercancel',()=>{tap=null});
+  function setBig(on){
+    big=on;ls.set('cj:big',on?'1':'0');
+    $('big').classList.toggle('on',on);$('big').setAttribute('aria-pressed',on);$('big').textContent=on?'작게 보기':'크게 보기';
+    built='';build();paint();
+  }
+  $('big').onclick=()=>setBig(!big);
   window.addEventListener('pointermove',e=>{
     if(!painting)return;
     const c=document.elementFromPoint(e.clientX,e.clientY);
@@ -544,7 +564,7 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
     fdb.ref('channels/'+CID+'/boards/'+curBoard).remove().then(()=>toast('이 표의 기록을 모두 지웠어요.'),()=>toast('지우지 못했어요. 다시 로그인해 주세요.'));
   };
 
-  withFont(cfg.text,()=>{applyColors();build();paint()});
+  withFont(cfg.text,()=>{applyColors();setBig(big)});
 })();
 </script>
 </body>
