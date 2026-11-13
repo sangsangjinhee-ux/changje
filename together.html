@@ -19,6 +19,9 @@
   --stroke:#2e7d68;
   --fill:#3aa588;
   --fill-hi:color-mix(in srgb,var(--fill) 40%,var(--cell));
+  --on-stroke:#ffffff;
+  --on-fill:#ffffff;
+  --mine:var(--fill);
   --display:"Black Han Sans","Noto Sans KR",sans-serif;
   --body:"Gowun Dodum","Noto Sans KR",system-ui,sans-serif;
 }
@@ -89,30 +92,58 @@ input[type=color]{width:34px;height:28px;padding:0;border:1.5px solid var(--line
 button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
 .hint{font-size:.74rem;color:var(--muted);text-align:center}
 
-.chan{display:flex;flex-direction:column;gap:2px;min-width:0}
-.chan h1{font-family:var(--display);font-size:clamp(1.5rem,5vw,2.1rem);margin:0;color:var(--stroke);line-height:1.15;text-wrap:balance;word-break:keep-all}
+.btns{flex-wrap:wrap}
+.chan{display:flex;flex-direction:column;gap:4px;min-width:0}
+.titleRow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.chan h1{font-family:var(--display);font-weight:400;font-size:clamp(1.5rem,5vw,2.1rem);margin:0;color:var(--stroke);line-height:1.15;text-wrap:balance;word-break:keep-all}
 .chan .sub{font-size:.8rem;color:var(--muted)}
-.me{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.82rem;color:var(--muted)}
+.period{display:inline-flex;align-items:baseline;gap:8px;background:var(--stroke);color:var(--on-stroke);border-radius:12px;padding:6px 12px 7px;line-height:1}
+.period b{font-family:var(--display);font-weight:400;font-size:clamp(1.2rem,4.4vw,1.55rem);letter-spacing:.01em}
+.period span{font-size:.82rem;font-variant-numeric:tabular-nums;opacity:.95}
+.period.done{background:var(--fill);color:var(--on-fill)}
+.me{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:.82rem;color:var(--muted)}
 .me b{color:var(--ink)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;flex:none}
 .linkbtn{background:none;border:0;padding:0;color:var(--stroke);text-decoration:underline;cursor:pointer;font-size:.82rem}
 .card{background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .card h2{font-family:var(--display);font-size:1.1rem;margin:0;color:var(--stroke);font-weight:400}
 .card p{margin:0;font-size:.85rem;color:var(--muted);line-height:1.55}
 .card label{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--muted)}
-.card input{font-family:var(--body);font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:8px 10px}
+.card input[type=text],.card input[type=password]{font-family:var(--body);font-size:1rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:8px 10px}
 .card .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pcolors{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pc{width:30px;height:30px;padding:0;border-radius:50%;border:2px solid transparent;background:var(--c)}
+.pc.on{border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--paper)}
+.pcolors label{flex-direction:row;align-items:center;gap:6px}
+.donecard{border-color:var(--fill);border-width:2px}
+.dc-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .err{color:#c4513f;font-size:.82rem;min-height:1em}
 .landing{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
 .hero h1{font-family:var(--display);font-size:clamp(1.8rem,7vw,2.6rem);margin:0;color:var(--stroke);font-weight:400}
 .hero p{margin:4px 0 0;color:var(--muted);font-size:.9rem}
-.people{display:flex;flex-wrap:wrap;gap:6px;font-size:.78rem;color:var(--muted)}
-.people .p{background:var(--cell);border:1px solid var(--line);border-radius:99px;padding:2px 9px;font-variant-numeric:tabular-nums}
+.bar{display:flex}
+.bar i{width:0;flex:none;transition:width .25s}
+.pace{font-size:.82rem;color:var(--ink)}
+.tfoot{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.people{display:flex;flex-wrap:wrap;gap:6px;font-size:.78rem;color:var(--muted);min-width:0;flex:1}
+.people .p{display:inline-flex;align-items:center;gap:5px;background:var(--cell);border:1px solid var(--line);border-radius:99px;padding:2px 9px;font-variant-numeric:tabular-nums}
 .people .p b{color:var(--ink)}
-.people .p.mine{border-color:var(--stroke)}
-.board.ro rect.c{cursor:default}
+.people .p.mine{border-color:var(--ink)}
+rect.c:not(.f):hover{fill:color-mix(in srgb,var(--mine) 45%,var(--cell))}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.dates{display:flex;gap:10px;flex-wrap:wrap}
+.settings input[type=date]{font-family:var(--body);font-size:.95rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:6px 8px}
 .toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
-  background:var(--ink);color:var(--paper);padding:8px 14px;border-radius:99px;font-size:.82rem;max-width:calc(100% - 32px);z-index:5}
+  background:var(--ink);color:var(--paper);padding:8px 14px;border-radius:99px;font-size:.82rem;max-width:calc(100% - 32px);z-index:30}
 .banner{background:var(--paper);border:1.5px dashed var(--line);border-radius:10px;padding:8px 12px;font-size:.82rem;color:var(--muted)}
+.overlay{position:fixed;inset:0;background:rgba(10,20,16,.6);display:flex;align-items:center;justify-content:center;z-index:20;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.sheet{background:var(--paper);border-radius:14px;padding:14px;max-width:560px;width:100%;max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.sheet .hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sheet h2{font-family:var(--display);font-weight:400;font-size:1.1rem;margin:0;color:var(--stroke)}
+.sheet img{width:100%;height:auto;border-radius:8px;border:1px solid var(--line);-webkit-touch-callout:default}
+.sheet .note{font-size:.78rem;color:var(--muted);margin:0}
+a.btn{font-family:var(--body);font-size:.82rem;text-decoration:none;border-radius:999px;padding:6px 14px;border:1.5px solid var(--stroke);background:var(--stroke);color:var(--on-stroke)}
 </style>
 </head>
 <body>
@@ -132,7 +163,7 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
       </form>
       <form class="card" id="newForm">
         <h2>새 채널 만들기</h2>
-        <p>채널 이름은 한글·영어·숫자로 최대 10자예요. 비밀번호는 글자와 색을 바꿀 때 써요.</p>
+        <p>채널 이름은 한글·영어·숫자로 최대 10자예요. 비밀번호는 글자, 색, 기간을 바꿀 때 써요.</p>
         <label>채널 이름<input id="newName" type="text" maxlength="10" placeholder="예: 청년부" autocomplete="off" required></label>
         <label>관리자 비밀번호 (6자 이상)<input id="newPw" type="password" minlength="6" autocomplete="new-password" required></label>
         <label>비밀번호 한 번 더<input id="newPw2" type="password" minlength="6" autocomplete="new-password" required></label>
@@ -146,25 +177,40 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
   <section id="channel" hidden style="display:flex;flex-direction:column;gap:12px">
     <div class="top">
       <div class="chan">
-        <h1 id="chanName">채널</h1>
+        <div class="titleRow">
+          <h1 id="chanName">채널</h1>
+          <span class="period" id="period" hidden><b id="pBig"></b><span id="pSmall"></span></span>
+        </div>
         <div class="sub">백만편 창제표 · 300시간 · <span id="word">청년약동</span></div>
       </div>
       <div class="btns">
         <button id="big" type="button" aria-pressed="false">크게 보기</button>
         <button id="copy" type="button">링크 복사</button>
-        <button id="undo" type="button" title="내가 마지막으로 칠한 칸 되돌리기">되돌리기</button>
-        <button id="adminBtn" type="button" aria-expanded="false">관리</button>
+        <button id="undo" type="button" title="내가 마지막으로 바꾼 칸 되돌리기">되돌리기</button>
+        <button id="adminBtn" type="button">관리</button>
       </div>
     </div>
 
     <div class="banner" id="banner" hidden></div>
 
+    <div class="card donecard" id="doneCard" hidden>
+      <div class="dc-row">
+        <div><h2>완수했어요!</h2><p>함께 300시간을 모두 채웠어요. <span id="doneMeta"></span></p></div>
+        <button type="button" class="saveImg on">사진으로 저장</button>
+      </div>
+    </div>
+
     <form class="card" id="nickForm" hidden>
-      <h2>닉네임을 정해주세요</h2>
-      <p>칠한 칸 옆에 이 이름이 남아요. 이 기기에서만 기억해요.</p>
+      <h2>닉네임과 내 색을 정해주세요</h2>
+      <p>내가 칠한 칸은 이 색으로 보이고, 표 아래에 이름이 남아요. 이 기기에서만 기억해요.</p>
+      <input id="nickIn" type="text" maxlength="20" placeholder="예: 지혜" autocomplete="nickname" required>
+      <div class="pcolors" id="pcolors">
+        <label><input type="color" id="pcCustom"> 직접 고르기</label>
+      </div>
+      <p id="nickNote" hidden>바꾸면 내가 칠한 칸도 새 이름과 색으로 바뀌어요.</p>
       <div class="row">
-        <input id="nickIn" type="text" maxlength="20" placeholder="예: 지혜" autocomplete="nickname" required style="flex:1;min-width:0">
-        <button class="on" type="submit">시작하기</button>
+        <button class="on" type="submit">저장하고 칠하기</button>
+        <button type="button" id="nickCancel" hidden>취소</button>
       </div>
     </form>
 
@@ -189,12 +235,23 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
           <option value="1">1글자 (세로)</option>
         </select>
       </label>
-      <div class="lbl full">색 테마
+      <div class="lbl full">기간
+        <div class="seg" id="pmodes">
+          <button type="button" data-m="none">기간 없음</button>
+          <button type="button" data-m="open">시작일부터 완수까지</button>
+          <button type="button" data-m="fixed">시작일 ~ 끝날짜</button>
+        </div>
+        <div class="dates" id="pdates">
+          <label>시작일<input type="date" id="pStart"></label>
+          <label id="pEndWrap">끝날짜<input type="date" id="pEnd"></label>
+        </div>
+      </div>
+      <div class="lbl full">채널 색 테마 (테두리와 기본 칠하는 색)
         <div class="swatches" id="swatches"></div>
       </div>
       <div class="lbl full">직접 고르기
         <div class="pickers">
-          <label><input type="color" id="cFill"> 칠하는 색</label>
+          <label><input type="color" id="cFill"> 기본 칠하는 색</label>
           <label><input type="color" id="cStroke"> 테두리 색</label>
         </div>
       </div>
@@ -202,7 +259,7 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
         <button id="apply" type="button" class="on">저장</button>
         <button id="reset" type="button" class="danger">전부 지우기</button>
         <button id="logout" type="button">로그아웃</button>
-        <span class="note">저장하면 모두의 화면에 바로 바뀌어요. 글자를 바꾸면 그 글자의 표로 넘어가고, 다시 돌아오면 이전 기록이 이어져요.</span>
+        <span class="note">저장하면 모두의 화면에 바로 바뀌어요. 참가자는 각자 고른 색으로 칠하고, 기본 색은 색을 안 고른 칸에 쓰여요.</span>
       </div>
     </div>
 
@@ -213,12 +270,28 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
         <div class="big" id="done">0<span> / 600칸</span></div>
         <div class="hrs">창제 <b id="hrs">0시간</b> · 남은 <b id="left">300시간</b> · <b id="pct">0%</b></div>
       </div>
-      <div class="bar"><i id="barfill"></i></div>
-      <div class="people" id="people"></div>
+      <div class="bar" id="bar"></div>
+      <div class="pace" id="pace" hidden></div>
+      <div class="tfoot">
+        <div class="people" id="people"></div>
+        <button type="button" class="saveImg">사진으로 저장</button>
+      </div>
     </div>
-    <div class="me" id="meRow" hidden>내 닉네임 <b id="meName"></b><button class="linkbtn" id="nickChange" type="button">바꾸기</button></div>
-    <div class="hint">칸을 누르면 칠해지고, 다시 누르면 지워져요. 컴퓨터에서는 누른 채 끌어서 여러 칸을 칠할 수 있어요. 폰에서는 두 손가락으로 확대하거나 <b>크게 보기</b>를 눌러보세요.</div>
+    <div class="me" id="meRow" hidden>내 닉네임 <i class="dot" id="meDot"></i><b id="meName"></b><button class="linkbtn" id="nickChange" type="button">이름·색 바꾸기</button></div>
+    <div class="hint">칸을 누르면 칠해지고, 다시 누르면 지워져요. 컴퓨터에서는 누른 채 끌어서 여러 칸을 칠할 수 있어요. 폰에서는 두 손가락으로 확대하거나 크게 보기를 눌러보세요.</div>
   </section>
+
+  <div class="overlay" id="shot" hidden>
+    <div class="sheet" role="dialog" aria-label="사진 미리보기">
+      <div class="hd"><h2>사진 미리보기</h2><button type="button" id="shotClose">닫기</button></div>
+      <img id="shotImg" alt="창제표 사진">
+      <div class="row" style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn" id="shotDl" href="#" download="창제표.png">사진 저장</a>
+        <button type="button" id="shotShare" hidden>공유하기</button>
+      </div>
+      <p class="note">저장이 안 되면 사진을 길게 누르거나(폰) 오른쪽 클릭해서(컴퓨터) 저장할 수 있어요.</p>
+    </div>
+  </div>
 
   <div class="toast" id="toast" hidden></div>
 </div>
@@ -252,17 +325,28 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
     {name:'해바라기',fill:'#f2c230',stroke:'#c98a12'},
     {name:'먹',fill:'#5a6270',stroke:'#2b313b'}
   ];
-  const DEFAULT={text:'청년약동',cols:2,fill:THEMES[0].fill,stroke:THEMES[0].stroke};
+  // participant colors: distinct hues that read on light and dark cells
+  const PCOLORS=['#e8534a','#f08a3c','#f2c230','#8cc84b','#3aa588','#2bb3c0','#4a9fe0','#5b6fd8','#9b7fe0','#d36fc6','#f29bb8','#8a6d55'];
+  const DEFAULT={text:'청년약동',cols:2,fill:THEMES[0].fill,stroke:THEMES[0].stroke,pmode:'none',pstart:'',pend:''};
 
-  // channel name <-> path-safe id (5 hex digits per character)
   const clean=s=>(s||'').replace(/\s+/g,' ').trim();
   const chanId=name=>[...name].map(c=>c.codePointAt(0).toString(16).padStart(5,'0')).join('');
   const boardId=t=>[...t].map(c=>c.codePointAt(0).toString(16)).join('-')||'empty';
   const emailOf=id=>id+'@changje.app';
   const chanUrl=name=>location.origin+location.pathname+'?c='+encodeURIComponent(name);
+  const isHex=s=>/^#[0-9a-fA-F]{6}$/.test(s||'');
+
+  // dates are local calendar days, stored as YYYY-MM-DD
+  const pad=n=>String(n).padStart(2,'0');
+  const dstr=ms=>{const d=new Date(ms);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+  const todayStr=()=>dstr(Date.now());
+  const validD=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'');
+  const parseD=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+  const dayDiff=(a,b)=>Math.round((parseD(b)-parseD(a))/864e5);
+  const md=s=>{const d=parseD(s);return (d.getMonth()+1)+'.'+d.getDate()};
 
   let toastT;
-  function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3000)}
+  function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)}
 
   const params=new URLSearchParams(location.search);
   const NAME=clean(params.get('c'));
@@ -304,25 +388,69 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
   $('channel').hidden=false;
   $('chanName').textContent=NAME;
 
-  let cfg={...DEFAULT},nick=ls.get('cj:nick')||'',isAdmin=false,big=ls.get('cj:big')==='1';
+  let cfg={...DEFAULT},isAdmin=false,editing=false,big=ls.get('cj:big')==='1';
+  let nick=ls.get('cj:nick')||'';
+  let myColor=ls.get('cj:color');
+  if(!isHex(myColor)){myColor=PCOLORS[Math.floor(Math.random()*PCOLORS.length)];ls.set('cj:color',myColor)}
+  let pickColor=myColor,nickOpen=false,colorOK=true,warned=false;
+  let filled=new Map(),total=0,history=[],cellsRef=null,curBoard='',built='',letters=[];
+  let stat={f:0,complete:false,doneAt:0};
   const viewCols=()=>big?1:cfg.cols;
-  let filled=new Map(),total=0,history=[],cellsRef=null,curBoard='',built='';
-
+  const bpath=()=>'channels/'+CID+'/boards/'+curBoard;
   function banner(m){$('banner').textContent=m||'';$('banner').hidden=!m}
 
-  // ----- nickname -----
-  function showNick(){
-    $('meRow').hidden=!nick;$('meName').textContent=nick;
-    $('nickForm').hidden=!!nick;
+  // ----- me: nickname + my color -----
+  PCOLORS.forEach(c=>{
+    const b=document.createElement('button');b.type='button';b.className='pc';b.style.setProperty('--c',c);b.dataset.c=c;
+    b.setAttribute('aria-label','색 '+c);b.onclick=()=>{pickColor=c;markPick()};
+    $('pcolors').insertBefore(b,$('pcolors').lastElementChild);
+  });
+  $('pcCustom').oninput=e=>{pickColor=e.target.value;markPick()};
+  function markPick(){
+    document.querySelectorAll('.pc').forEach(b=>b.classList.toggle('on',b.dataset.c.toLowerCase()===pickColor.toLowerCase()));
+    $('pcCustom').value=pickColor;
   }
-  $('nickForm').onsubmit=e=>{e.preventDefault();const v=clean($('nickIn').value).slice(0,20);if(!v)return;nick=v;ls.set('cj:nick',nick);showNick();renderPeople()};
-  $('nickChange').onclick=()=>{$('nickIn').value=nick;nick='';showNick();$('nickIn').focus()};
-  showNick();
+  function showNick(){
+    $('meRow').hidden=!nick||nickOpen;$('meName').textContent=nick;$('meDot').style.background=myColor;
+    $('nickForm').hidden=!!nick&&!nickOpen;
+    $('nickCancel').hidden=!nick;$('nickNote').hidden=!nick;
+    document.documentElement.style.setProperty('--mine',myColor);
+  }
+  $('nickForm').onsubmit=e=>{
+    e.preventDefault();const v=clean($('nickIn').value).slice(0,20);if(!v)return;
+    const oldN=nick,oldC=myColor;
+    nick=v;if(isHex(pickColor))myColor=pickColor;
+    ls.set('cj:nick',nick);ls.set('cj:color',myColor);
+    nickOpen=false;showNick();
+    if(oldN&&(oldN!==nick||oldC.toLowerCase()!==myColor.toLowerCase()))recolorMine(oldN,oldC);
+    paint();
+  };
+  $('nickChange').onclick=()=>{nickOpen=true;$('nickIn').value=nick;pickColor=myColor;markPick();showNick();$('nickIn').focus()};
+  $('nickCancel').onclick=()=>{nickOpen=false;showNick()};
+  markPick();showNick();
 
-  // ----- colors -----
+  // Move my earlier cells to my new name/color in one multi-path update
+  function recolorMine(oldN,oldC){
+    const upd={};
+    filled.forEach((v,i)=>{
+      if(i<total&&v.n===oldN&&(!v.c||v.c.toLowerCase()===oldC.toLowerCase())){
+        upd['cells/'+i+'/n']=nick;if(colorOK)upd['cells/'+i+'/c']=myColor;
+        filled.set(i,{...v,n:nick,c:myColor});
+      }
+    });
+    if(!Object.keys(upd).length||!curBoard)return;
+    fdb.ref(bpath()).update(upd).then(
+      ()=>toast('내가 칠한 칸도 새 이름과 색으로 바꿨어요.'),
+      ()=>toast('이전에 칠한 칸은 바꾸지 못했어요. Firebase 규칙을 확인해 주세요.'));
+  }
+
+  // ----- channel colors (admin) -----
+  const lum=h=>{const n=parseInt(h.slice(1),16);return (0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255};
   function applyColors(){
     const r=document.documentElement.style;
     r.setProperty('--fill',cfg.fill);r.setProperty('--stroke',cfg.stroke);
+    r.setProperty('--on-stroke',lum(cfg.stroke)>0.62?'#1d2622':'#ffffff');
+    r.setProperty('--on-fill',lum(cfg.fill)>0.62?'#1d2622':'#ffffff');
     $('cFill').value=cfg.fill;$('cStroke').value=cfg.stroke;
     document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('on',b.dataset.f===cfg.fill&&b.dataset.s===cfg.stroke));
   }
@@ -330,10 +458,10 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
     const b=document.createElement('button');b.type='button';b.className='sw';
     b.style.setProperty('--a',t.fill);b.style.setProperty('--b',t.stroke);
     b.dataset.f=t.fill;b.dataset.s=t.stroke;b.title=t.name;b.setAttribute('aria-label',t.name);
-    b.onclick=()=>{cfg.fill=t.fill;cfg.stroke=t.stroke;applyColors()};
+    b.onclick=()=>{cfg.fill=t.fill;cfg.stroke=t.stroke;applyColors();paint()};
     $('swatches').appendChild(b);
   });
-  $('cFill').oninput=e=>{cfg.fill=e.target.value;applyColors()};
+  $('cFill').oninput=e=>{cfg.fill=e.target.value;applyColors();paint()};
   $('cStroke').oninput=e=>{cfg.stroke=e.target.value;applyColors()};
 
   // ----- letter shapes -----
@@ -385,7 +513,9 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
     all.slice(0,TOTAL).forEach(p=>liveCells[p.ci][p.r][p.c]=true);
     const NS='http://www.w3.org/2000/svg';let idx=0;
     const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e};
+    letters=[];
     chars.forEach((ch,ci)=>{
+      const rec={ch,n,w:wBest,live:[],spare:[]};
       const box=document.createElement('div');box.className='ch';
       const svg=el('svg',{viewBox:`0 0 ${n} ${n}`,role:'group','aria-label':ch});
       const defs=el('defs');const id='m'+ci+'_'+Date.now();
@@ -403,48 +533,99 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
       let first=idx,len=0;
       for(let r=0;r<n;r++)for(let c=0;c<n;c++){
         if(covs[ci][r][c]<=0)continue;
-        if(liveCells[ci][r][c]){const rc=el('rect',{class:'c',x:c,y:r,width:1,height:1});rc.dataset.i=idx++;len++;grid.appendChild(rc)}
-        else grid.appendChild(el('rect',{class:'s',x:c,y:r,width:1,height:1}));
+        if(liveCells[ci][r][c]){const rc=el('rect',{class:'c',x:c,y:r,width:1,height:1});rc.dataset.i=idx;rec.live.push({i:idx,r,c});idx++;len++;grid.appendChild(rc)}
+        else{grid.appendChild(el('rect',{class:'s',x:c,y:r,width:1,height:1}));rec.spare.push({r,c})}
       }
       svg.appendChild(grid);
       const cnt=document.createElement('span');cnt.className='cnt';cnt.dataset.from=first;cnt.dataset.len=len;
       box.append(svg,cnt);board.appendChild(box);
+      letters.push(rec);
     });
     total=idx;
   }
 
-  // ----- tally -----
+  // ----- tally, people, period -----
   function fmt(min){const h=Math.floor(min/60),m=min%60;return m?(h?h+'시간 ':'')+m+'분':h+'시간'}
+  const colorOf=v=>v.c||cfg.fill;
   function paint(){
-    document.querySelectorAll('#board rect.c').forEach(r=>r.classList.toggle('f',filled.has(+r.dataset.i)));
+    document.querySelectorAll('#board rect.c').forEach(r=>{
+      const v=filled.get(+r.dataset.i);r.classList.toggle('f',!!v);r.style.fill=v?colorOf(v):'';
+    });
     tally();
   }
+  function peopleList(){
+    const m=new Map();
+    filled.forEach((v,i)=>{
+      if(i>=total)return;
+      let p=m.get(v.n);if(!p){p={n:v.n,k:0,cc:new Map()};m.set(v.n,p)}
+      p.k++;const c=colorOf(v);p.cc.set(c,(p.cc.get(c)||0)+1);
+    });
+    return [...m.values()].map(p=>({n:p.n,k:p.k,c:[...p.cc.entries()].sort((a,b)=>b[1]-a[1])[0][0]})).sort((a,b)=>b.k-a.k);
+  }
   function tally(){
-    const f=[...filled.keys()].filter(i=>i<total).length;
+    let f=0,doneAt=0;
+    filled.forEach((v,i)=>{if(i<total){f++;doneAt=Math.max(doneAt,v.t||0)}});
+    const complete=total>0&&f>=total;
+    stat={f,complete,doneAt:complete?(doneAt||Date.now()):0};
     $('done').firstChild.nodeValue=f.toLocaleString();
     $('done').lastChild.textContent=' / '+total.toLocaleString()+'칸';
     $('hrs').textContent=fmt(f*MINS);
     $('left').textContent=fmt((total-f)*MINS);
     const pct=total?f/total*100:0;
     $('pct').textContent=(pct<10&&pct>0?pct.toFixed(1):Math.round(pct))+'%';
-    $('barfill').style.width=pct+'%';
     document.querySelectorAll('.cnt').forEach(s=>{
       const a=+s.dataset.from,l=+s.dataset.len;let k=0;
       for(let i=a;i<a+l;i++)if(filled.has(i))k++;
       s.textContent=k+'/'+l;
     });
-    renderPeople();
-  }
-  function renderPeople(){
-    const counts=new Map();
-    filled.forEach((who,i)=>{if(i<total)counts.set(who,(counts.get(who)||0)+1)});
+    const ppl=peopleList();
+    const bar=$('bar');bar.textContent='';
+    ppl.forEach(p=>{const s=document.createElement('i');s.style.width=(total?p.k/total*100:0)+'%';s.style.background=p.c;s.title=(p.n||'이름 없음')+' '+p.k+'칸';bar.appendChild(s)});
     const box=$('people');box.textContent='';
-    [...counts.entries()].sort((a,b)=>b[1]-a[1]).forEach(([who,k])=>{
-      const s=document.createElement('span');s.className='p'+(who===nick?' mine':'');
-      const b=document.createElement('b');b.textContent=who||'이름 없음';
-      s.append(b,' '+k+'칸 · '+fmt(k*MINS));box.appendChild(s);
+    ppl.forEach(p=>{
+      const s=document.createElement('span');s.className='p'+(p.n===nick?' mine':'');
+      const d=document.createElement('i');d.className='dot';d.style.background=p.c;
+      const b=document.createElement('b');b.textContent=p.n||'이름 없음';
+      s.append(d,b,' '+p.k+'칸 · '+fmt(p.k*MINS));box.appendChild(s);
     });
+    renderPeriod();
   }
+  function periodInfo(){
+    const today=todayStr(),s=cfg.pstart,e=cfg.pend,m=cfg.pmode;
+    if(stat.complete){
+      const cd=dstr(stat.doneAt);
+      if(m!=='none'&&validD(s)){const d=Math.max(1,dayDiff(s,cd)+1);return{big:'완수',small:md(s)+' – '+md(cd)+' · '+d+'일',done:true}}
+      return{big:'완수',small:md(cd)+' 완수',done:true};
+    }
+    if(m==='fixed'&&validD(s)&&validD(e)){
+      const toS=dayDiff(today,s),toE=dayDiff(today,e);
+      return{big:toS>0?'시작 D-'+toS:toE<0?'기간 종료':toE===0?'D-DAY':'D-'+toE,small:md(s)+' – '+md(e),toS,toE};
+    }
+    if(m==='open'&&validD(s)){
+      const toS=dayDiff(today,s);
+      return toS>0?{big:'시작 D-'+toS,small:md(s)+'부터',toS}:{big:(1-toS)+'일째',small:md(s)+' 시작',toS};
+    }
+    return null;
+  }
+  function renderPeriod(){
+    const p=periodInfo();
+    $('period').hidden=!p;
+    if(p){$('pBig').textContent=p.big;$('pSmall').textContent=p.small;$('period').classList.toggle('done',!!p.done)}
+    let pace='';
+    if(p&&!stat.complete){
+      const left=total-stat.f;
+      if(cfg.pmode==='fixed'&&p.toS<=0&&p.toE>=0){const days=p.toE+1,per=Math.ceil(left/days);pace=`남은 ${days}일 동안 하루 ${per}칸(${fmt(per*MINS)})씩 칠하면 완수해요.`}
+      else if(cfg.pmode==='fixed'&&p.toE<0)pace=`기간이 끝났어요. ${left}칸(${fmt(left*MINS)})이 남았어요.`;
+      else if(cfg.pmode==='open'&&p.toS<=0){const days=1-p.toS,avg=stat.f/days;pace=`지금까지 하루 평균 ${avg.toFixed(1)}칸(${fmt(Math.round(avg*MINS))})씩 칠했어요.`}
+    }
+    $('pace').textContent=pace;$('pace').hidden=!pace;
+    $('doneCard').hidden=!stat.complete;
+    if(stat.complete){
+      const n=peopleList().filter(x=>x.n).length;
+      $('doneMeta').textContent=[p&&p.small,n?'참가자 '+n+'명':''].filter(Boolean).join(' · ');
+    }
+  }
+  setInterval(renderPeriod,5*60*1000);
 
   // ----- live data -----
   function watchBoard(){
@@ -452,43 +633,54 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
     if(b===curBoard)return;
     if(cellsRef)cellsRef.off();
     curBoard=b;history=[];filled=new Map();paint();
-    cellsRef=fdb.ref('channels/'+CID+'/boards/'+b+'/cells');
+    cellsRef=fdb.ref(bpath()+'/cells');
     cellsRef.on('value',snap=>{
       const m=new Map(),v=snap.val()||{};
-      for(const k in v){const i=+k;if(Number.isInteger(i))m.set(i,(v[k]&&v[k].n)||'')}
+      for(const k in v){const i=+k,x=v[k]||{};if(Number.isInteger(i))m.set(i,{n:x.n||'',c:isHex(x.c)?x.c:'',t:+x.t||0})}
       filled=m;if(!painting)paint();
-    },err=>banner('기록을 불러오지 못했어요. 잠시 후 새로고침해 주세요.'));
+    },()=>banner('기록을 불러오지 못했어요. 잠시 후 새로고침해 주세요.'));
   }
-  function writeCell(i,on){
-    const ref=fdb.ref('channels/'+CID+'/boards/'+curBoard+'/cells/'+i);
-    (on?ref.set({n:nick,t:firebase.database.ServerValue.TIMESTAMP}):ref.remove())
-      .catch(()=>toast('저장하지 못한 칸이 있어요. 인터넷 연결을 확인해 주세요.'));
+  const fail=()=>toast('저장하지 못한 칸이 있어요. 인터넷 연결을 확인해 주세요.');
+  function writeCell(i,val){
+    const ref=fdb.ref(bpath()+'/cells/'+i);
+    if(!val){ref.remove().catch(fail);return}
+    const body={n:val.n,t:firebase.database.ServerValue.TIMESTAMP};
+    if(colorOK&&val.c)body.c=val.c;
+    ref.set(body).catch(()=>{
+      // older rules reject the color field: keep painting without it and say how to fix
+      if(body.c){colorOK=false;if(!warned){warned=true;toast('Firebase 규칙을 새 버전으로 바꾸면 참가자 색이 저장돼요.')}delete body.c;return ref.set(body).catch(fail)}
+      fail();
+    });
   }
   function withFont(text,fn){
-    if(!(document.fonts&&document.fonts.load))return fn();
+    if(!(document.fonts&&document.fonts.load))return Promise.resolve(fn());
     return Promise.race([document.fonts.load('700 100px "Noto Sans KR"',text||'청'),new Promise(r=>setTimeout(r,2500))]).then(fn,fn);
   }
-  let editing=false;
   fdb.ref('channels/'+CID+'/config').on('value',snap=>{
     const d=snap.val();
     if(!d){banner('아직 없는 채널이에요. 채널 이름을 확인하거나 새로 만들어 주세요.');$('board').innerHTML='';
       const a=document.createElement('a');a.href=location.pathname;a.textContent=' 채널 만들러 가기';$('banner').appendChild(a);return}
     banner('');
     const next={...DEFAULT,...d};
-    if(editing){cfg.text=next.text;cfg.cols=next.cols}else cfg=next;
+    cfg=editing?{...next,fill:cfg.fill,stroke:cfg.stroke}:next;
     withFont(cfg.text,()=>{applyColors();build();watchBoard();paint()});
   },()=>banner('채널을 불러오지 못했어요. 잠시 후 새로고침해 주세요.'));
 
   // ----- painting -----
   let painting=false,mode=true,stroke=[];
   function setCell(e){
-    const i=+e.dataset.i;if(filled.has(i)===mode)return;
-    if(mode)filled.set(i,nick);else filled.delete(i);
-    e.classList.toggle('f',mode);stroke.push(i);writeCell(i,mode);
+    const i=+e.dataset.i,had=filled.get(i)||null;
+    if(!!had===mode)return;
+    stroke.push({i,prev:had});
+    const val=mode?{n:nick,c:myColor,t:Date.now()}:null;
+    if(val)filled.set(i,val);else filled.delete(i);
+    e.classList.toggle('f',mode);e.style.fill=val?val.c:'';
+    writeCell(i,val);
   }
   const board=$('board');
   let tap=null;
-  function needNick(){if(nick)return false;$('nickForm').hidden=false;$('nickIn').focus();toast('닉네임을 먼저 정해주세요.');return true}
+  function needNick(){if(nick)return false;$('nickForm').hidden=false;$('nickIn').focus();toast('닉네임과 색을 먼저 정해주세요.');return true}
+  function pushHistory(){if(stroke.length){history.push({board:curBoard,cells:stroke});if(history.length>50)history.shift()}}
   board.addEventListener('pointerdown',e=>{
     const c=e.target.closest('rect.c');if(!c)return;
     if(e.pointerType==='touch'){tap={c,x:e.clientX,y:e.clientY,id:e.pointerId};return}
@@ -499,29 +691,27 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
     if(!tap||e.pointerId!==tap.id)return;
     const t=tap;tap=null;
     if(Math.hypot(e.clientX-t.x,e.clientY-t.y)>10||needNick())return;
-    mode=!filled.has(+t.c.dataset.i);stroke=[];setCell(t.c);
-    history.push({board:curBoard,mode,cells:stroke});if(history.length>50)history.shift();
-    paint();
+    mode=!filled.has(+t.c.dataset.i);stroke=[];setCell(t.c);pushHistory();paint();
   });
   board.addEventListener('pointercancel',()=>{tap=null});
+  window.addEventListener('pointermove',e=>{
+    if(!painting)return;
+    const c=document.elementFromPoint(e.clientX,e.clientY);
+    if(c&&c.matches&&c.matches('rect.c')){setCell(c);tally()}
+  });
+  const end=()=>{if(!painting)return;painting=false;pushHistory()};
+  window.addEventListener('pointerup',end);window.addEventListener('pointercancel',end);
+  $('undo').onclick=()=>{
+    const h=history.pop();if(!h||h.board!==curBoard)return;
+    h.cells.forEach(({i,prev})=>{if(prev)filled.set(i,prev);else filled.delete(i);writeCell(i,prev)});
+    paint();
+  };
   function setBig(on){
     big=on;ls.set('cj:big',on?'1':'0');
     $('big').classList.toggle('on',on);$('big').setAttribute('aria-pressed',on);$('big').textContent=on?'작게 보기':'크게 보기';
     built='';build();paint();
   }
   $('big').onclick=()=>setBig(!big);
-  window.addEventListener('pointermove',e=>{
-    if(!painting)return;
-    const c=document.elementFromPoint(e.clientX,e.clientY);
-    if(c&&c.matches&&c.matches('rect.c')){setCell(c);tally()}
-  });
-  const end=()=>{if(!painting)return;painting=false;if(stroke.length){history.push({board:curBoard,mode,cells:stroke});if(history.length>50)history.shift()}};
-  window.addEventListener('pointerup',end);window.addEventListener('pointercancel',end);
-  $('undo').onclick=()=>{
-    const h=history.pop();if(!h||h.board!==curBoard)return;
-    h.cells.forEach(i=>{if(h.mode)filled.delete(i);else filled.set(i,nick);writeCell(i,!h.mode)});
-    paint();
-  };
   $('copy').onclick=()=>{
     const u=chanUrl(NAME);
     const done=()=>toast('채널 링크를 복사했어요.');
@@ -529,16 +719,136 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
     else prompt('이 링크를 복사하세요',u);
   };
 
+  // ----- save as picture -----
+  function tint(src,color){
+    const c=document.createElement('canvas');c.width=src.width;c.height=src.height;
+    const g=c.getContext('2d');g.drawImage(src,0,0);g.globalCompositeOperation='source-in';g.fillStyle=color;g.fillRect(0,0,c.width,c.height);
+    return c;
+  }
+  function rrect(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+  let shotUrl='';
+  async function saveImage(){
+    if(!letters.length){toast('표를 불러온 뒤에 저장할 수 있어요.');return}
+    const btns=[...document.querySelectorAll('.saveImg')];btns.forEach(b=>b.disabled=true);
+    try{
+      await Promise.race([Promise.all([
+        document.fonts.load('400 60px "Black Han Sans"',NAME+'완수D-0123456789일째시작기간종료'),
+        document.fonts.load('400 20px "Gowun Dodum"','백만편 창제표 시간칸'),
+        document.fonts.load('700 20px "Noto Sans KR"',cfg.text)]),new Promise(r=>setTimeout(r,2500))]).catch(()=>{});
+      const cs=getComputedStyle(document.documentElement),V=k=>cs.getPropertyValue(k).trim();
+      const C={bg:V('--bg'),paper:V('--paper'),ink:V('--ink'),muted:V('--muted'),line:V('--line'),cell:V('--cell'),halo:V('--halo'),
+        stroke:cfg.stroke,fill:cfg.fill,onStroke:V('--on-stroke')||'#fff',onFill:V('--on-fill')||'#fff'};
+      const DISP='"Black Han Sans","Noto Sans KR",sans-serif',BODY='"Gowun Dodum","Noto Sans KR",sans-serif';
+      const Wd=1080,M=56,SC=2,gap=18;
+      const meas=document.createElement('canvas').getContext('2d');
+      const p=periodInfo(),ppl=peopleList();
+      // header layout
+      meas.font='400 60px '+DISP;const tw=meas.measureText(NAME).width;
+      let bw=0,bigW=0;
+      if(p){meas.font='400 30px '+DISP;bigW=meas.measureText(p.big).width;meas.font='400 19px '+BODY;bw=bigW+(p.small?meas.measureText(p.small).width+12:0)+32}
+      const badgeInline=p&&M+tw+18+bw<=Wd-M;
+      let y=M;const titleBase=y+56;y=titleBase+14;
+      let badgeY=titleBase-40,badgeX=M+tw+18;
+      if(p&&!badgeInline){badgeX=M;badgeY=y+4;y+=56}
+      const subBase=y+24;y=subBase+30;
+      // letters grid
+      const cols=Math.min(cfg.cols,letters.length),rows=Math.ceil(letters.length/cols);
+      const L=Math.min(480,(Wd-2*M-gap*(cols-1))/cols),gridW=cols*L+gap*(cols-1),gx=(Wd-gridW)/2,gy=y;
+      y=gy+rows*L+(rows-1)*gap+34;
+      // footer layout
+      const numBase=y+40;y=numBase+20;const barY=y;y+=14+20;
+      meas.font='700 19px '+BODY;
+      const chips=[];let cx=M,cy=y;
+      ppl.forEach(q=>{const label=(q.n||'이름 없음')+'  '+q.k+'칸 · '+fmt(q.k*MINS);const w=meas.measureText(label).width+44;
+        if(cx+w>Wd-M&&cx>M){cx=M;cy+=44}chips.push({q,label,x:cx,y:cy,w});cx+=w+10});
+      y=(ppl.length?cy+36:y)+30;
+      const footBase=y+16,H=footBase+M-16;
+
+      const cv=document.createElement('canvas');cv.width=Wd*SC;cv.height=Math.ceil(H*SC);
+      const g=cv.getContext('2d');g.scale(SC,SC);g.imageSmoothingQuality='high';
+      g.fillStyle=C.bg;g.fillRect(0,0,Wd,H);
+      g.textBaseline='alphabetic';
+      g.fillStyle=C.stroke;g.font='400 60px '+DISP;g.fillText(NAME,M,titleBase);
+      if(p){
+        g.fillStyle=p.done?C.fill:C.stroke;rrect(g,badgeX,badgeY,bw,48,14);g.fill();
+        g.fillStyle=p.done?C.onFill:C.onStroke;g.font='400 30px '+DISP;g.fillText(p.big,badgeX+16,badgeY+35);
+        if(p.small){g.font='400 19px '+BODY;g.fillText(p.small,badgeX+16+bigW+12,badgeY+33)}
+      }
+      g.fillStyle=C.muted;g.font='400 21px '+BODY;
+      g.fillText('백만편 창제표 · 300시간 · '+letters.map(l=>l.ch).join(''),M,subBase);
+
+      letters.forEach((lt,k)=>{
+        const x=gx+(k%cols)*(L+gap),yy=gy+Math.floor(k/cols)*(L+gap);
+        const S=Math.ceil(L*SC/lt.n);
+        const inner=draw(lt.ch,lt.n,lt.w,0,S).cv;
+        g.drawImage(tint(draw(lt.ch,lt.n,lt.w,2*OUT+0.9,S).cv,C.halo),x,yy,L,L);
+        g.drawImage(tint(draw(lt.ch,lt.n,lt.w,2*OUT,S).cv,C.stroke),x,yy,L,L);
+        g.drawImage(tint(inner,C.cell),x,yy,L,L);
+        const lay=document.createElement('canvas');lay.width=lay.height=lt.n*S;
+        const q=lay.getContext('2d');
+        lt.live.forEach(({i,r,c})=>{const v=filled.get(i);if(v){q.fillStyle=colorOf(v);q.fillRect(c*S,r*S,S,S)}});
+        q.strokeStyle=C.line;q.lineWidth=Math.max(1,S*0.06);
+        lt.live.concat(lt.spare).forEach(({r,c})=>q.strokeRect(c*S,r*S,S,S));
+        q.globalCompositeOperation='destination-in';q.drawImage(inner,0,0);
+        g.drawImage(lay,x,yy,L,L);
+      });
+
+      g.fillStyle=C.ink;g.font='400 40px '+DISP;
+      const numTxt=stat.f.toLocaleString()+' / '+total.toLocaleString()+'칸';g.fillText(numTxt,M,numBase);
+      g.font='400 22px '+BODY;g.fillStyle=C.muted;g.textAlign='right';
+      g.fillText(fmt(stat.f*MINS)+' · '+Math.floor(total?stat.f/total*100:0)+'%',Wd-M,numBase);g.textAlign='left';
+      g.save();rrect(g,M,barY,Wd-2*M,14,7);g.clip();g.fillStyle=C.cell;g.fillRect(M,barY,Wd-2*M,14);
+      let bx=M;ppl.forEach(q=>{const w=(Wd-2*M)*q.k/total;g.fillStyle=q.c;g.fillRect(bx,barY,w+0.5,14);bx+=w});g.restore();
+      g.strokeStyle=C.line;g.lineWidth=1;rrect(g,M+.5,barY+.5,Wd-2*M-1,13,7);g.stroke();
+      chips.forEach(({q,label,x,y:cy2,w})=>{
+        g.fillStyle=C.paper;rrect(g,x,cy2,w,36,18);g.fill();g.strokeStyle=C.line;g.stroke();
+        g.fillStyle=q.c;g.beginPath();g.arc(x+20,cy2+18,7,0,Math.PI*2);g.fill();
+        g.fillStyle=C.ink;g.font='700 19px '+BODY;g.fillText(label,x+34,cy2+25);
+      });
+      g.fillStyle=C.muted;g.font='400 16px '+BODY;
+      g.fillText('백만편 창제표 · '+todayStr().replace(/-/g,'.')+' 저장',M,footBase);
+
+      const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
+      if(!blob)throw new Error('blob');
+      if(shotUrl)URL.revokeObjectURL(shotUrl);
+      shotUrl=URL.createObjectURL(blob);
+      const fname=NAME.replace(/\s+/g,'_')+'_창제표_'+todayStr()+'.png';
+      $('shotImg').src=shotUrl;$('shotDl').href=shotUrl;$('shotDl').download=fname;
+      let file=null;try{file=new File([blob],fname,{type:'image/png'})}catch(e){}
+      const canShare=!!(file&&navigator.canShare&&navigator.canShare({files:[file]})&&matchMedia('(pointer:coarse)').matches);
+      $('shotShare').hidden=!canShare;
+      $('shotShare').onclick=()=>navigator.share({files:[file],title:NAME+' 창제표'}).catch(()=>{});
+      $('shot').hidden=false;
+    }catch(e){toast('사진을 만들지 못했어요. 다시 해주세요.')}
+    finally{btns.forEach(b=>b.disabled=false)}
+  }
+  document.querySelectorAll('.saveImg').forEach(b=>b.onclick=saveImage);
+  $('shotClose').onclick=()=>{$('shot').hidden=true};
+  $('shot').addEventListener('click',e=>{if(e.target===$('shot'))$('shot').hidden=true});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')$('shot').hidden=true});
+
   // ----- admin -----
+  let pm='none';
+  function setPm(m){
+    pm=m;document.querySelectorAll('#pmodes button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+    $('pdates').hidden=m==='none';$('pEndWrap').hidden=m!=='fixed';
+    if(m!=='none'&&!$('pStart').value)$('pStart').value=todayStr();
+  }
+  document.querySelectorAll('#pmodes button').forEach(b=>b.onclick=()=>setPm(b.dataset.m));
+  function populateSettings(){
+    $('txt').value=cfg.text;$('cols').value=cfg.cols;
+    $('pStart').value=cfg.pstart||'';$('pEnd').value=cfg.pend||'';setPm(cfg.pmode||'none');
+    applyColors();
+  }
   function setAdmin(on){
     isAdmin=on;editing=on;
     $('settings').hidden=!on;$('loginForm').hidden=true;
     $('adminBtn').classList.toggle('on',on);$('adminBtn').textContent=on?'관리 중':'관리';
-    if(on){$('txt').value=cfg.text;$('cols').value=cfg.cols;applyColors()}
+    if(on)populateSettings();
   }
   auth.onAuthStateChanged(u=>setAdmin(!!(u&&u.email===emailOf(CID))));
   $('adminBtn').onclick=()=>{
-    if(isAdmin){const s=$('settings');s.hidden=!s.hidden;return}
+    if(isAdmin){const s=$('settings');s.hidden=!s.hidden;if(!s.hidden)populateSettings();return}
     const f=$('loginForm');f.hidden=!f.hidden;if(!f.hidden)$('pwIn').focus();
   };
   $('loginForm').onsubmit=async e=>{
@@ -548,9 +858,13 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
       $('loginErr').textContent=c.includes('too-many-requests')?'시도가 너무 많아요. 잠시 후 다시 해주세요.':'비밀번호가 맞지 않아요.'}
     finally{$('loginBtn').disabled=false}
   };
-  $('logout').onclick=()=>{auth.signOut();fdb.ref('channels/'+CID+'/config').once('value').then(s=>{cfg={...DEFAULT,...(s.val()||{})};applyColors()})};
+  $('logout').onclick=()=>{auth.signOut();fdb.ref('channels/'+CID+'/config').once('value').then(s=>{cfg={...DEFAULT,...(s.val()||{})};applyColors();paint()})};
   $('apply').onclick=async()=>{
-    const next={text:clean($('txt').value).replace(/\s/g,'').slice(0,6)||'청년약동',cols:+$('cols').value,fill:cfg.fill,stroke:cfg.stroke};
+    const start=$('pStart').value,end=$('pEnd').value;
+    if(pm!=='none'&&!validD(start)){toast('시작일을 정해주세요.');return}
+    if(pm==='fixed'&&(!validD(end)||end<start)){toast('끝날짜는 시작일과 같거나 그 뒤여야 해요.');return}
+    const next={text:clean($('txt').value).replace(/\s/g,'').slice(0,6)||'청년약동',cols:+$('cols').value,fill:cfg.fill,stroke:cfg.stroke,
+      pmode:pm,pstart:pm==='none'?'':start,pend:pm==='fixed'?end:''};
     $('apply').disabled=true;
     try{await fdb.ref('channels/'+CID+'/config').set(next);toast('저장했어요. 모두의 화면에 반영돼요.')}
     catch(e){toast('저장하지 못했어요. 다시 로그인해 주세요.')}
@@ -561,7 +875,7 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
     const b=$('reset');
     if(!armed){b.classList.add('arm');b.textContent='한 번 더 누르면 모두의 기록 삭제';armed=setTimeout(()=>{armed=null;b.classList.remove('arm');b.textContent='전부 지우기'},3000);return}
     clearTimeout(armed);armed=null;b.classList.remove('arm');b.textContent='전부 지우기';
-    fdb.ref('channels/'+CID+'/boards/'+curBoard).remove().then(()=>toast('이 표의 기록을 모두 지웠어요.'),()=>toast('지우지 못했어요. 다시 로그인해 주세요.'));
+    fdb.ref(bpath()).remove().then(()=>toast('이 표의 기록을 모두 지웠어요.'),()=>toast('지우지 못했어요. 다시 로그인해 주세요.'));
   };
 
   withFont(cfg.text,()=>{applyColors();setBig(big)});
