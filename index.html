@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>백만편 창제표</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,6 +20,8 @@
   --stroke:#2e7d68;
   --fill:#3aa588;
   --fill-hi:color-mix(in srgb,var(--fill) 40%,var(--cell));
+  --on-stroke:#ffffff;
+  --on-fill:#ffffff;
   --display:"Black Han Sans","Noto Sans KR",sans-serif;
   --body:"Gowun Dodum","Noto Sans KR",system-ui,sans-serif;
 }
@@ -83,12 +90,36 @@ input[type=color]{width:34px;height:28px;padding:0;border:1.5px solid var(--line
 .settings .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .settings .note{font-size:.75rem;color:var(--muted)}
 button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
+.titleRow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+.period{display:inline-flex;align-items:baseline;gap:7px;background:var(--stroke);color:var(--on-stroke);border-radius:11px;padding:5px 11px 6px;line-height:1}
+.period b{font-family:var(--display);font-weight:400;font-size:1.25rem;letter-spacing:.01em}
+.period span{font-size:.78rem;font-variant-numeric:tabular-nums;opacity:.95}
+.period.done{background:var(--fill);color:var(--on-fill)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.dates{display:flex;gap:10px;flex-wrap:wrap}
+.settings input[type=date]{font-family:var(--body);font-size:.95rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:6px 8px}
+.pace{font-size:.82rem;color:var(--ink)}
+.tfoot{display:flex;justify-content:flex-end}
+.donecard{background:var(--paper);border:2px solid var(--fill);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.donecard h2{font-family:var(--display);font-weight:400;font-size:1.1rem;margin:0;color:var(--stroke)}
+.donecard p{margin:2px 0 0;font-size:.84rem;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
+  background:var(--ink);color:var(--paper);padding:8px 14px;border-radius:99px;font-size:.82rem;max-width:calc(100% - 32px);z-index:30}
+.overlay{position:fixed;inset:0;background:rgba(10,20,16,.6);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.sheet{background:var(--paper);border-radius:14px;padding:14px;max-width:520px;width:100%;max-height:100%;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.sheet .hd{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sheet h2{font-family:var(--display);font-weight:400;font-size:1.1rem;margin:0;color:var(--stroke)}
+.sheet img{width:100%;height:auto;border-radius:8px;border:1px solid var(--line)}
+.sheet .note{font-size:.78rem;color:var(--muted);margin:0}
+a.btn{font-family:var(--body);font-size:.82rem;text-decoration:none;border-radius:999px;padding:6px 14px;border:1.5px solid var(--stroke);background:var(--stroke);color:var(--on-stroke)}
 .hint{font-size:.74rem;color:var(--muted);text-align:center}
 </style>
 
+</head>
+<body>
 <div class="wrap">
   <div class="top">
-    <h1 class="title" id="ttl">청년약동<small>백만편 창제표 · 300시간</small></h1>
+    <div class="titleRow"><h1 class="title" id="ttl">청년약동<small>백만편 창제표 · 300시간</small></h1><span class="period" id="period" hidden><b id="pBig"></b><span id="pSmall"></span></span></div>
     <div class="btns">
       <button id="undo" type="button" title="마지막으로 칠한 칸 되돌리기">되돌리기</button>
       <button id="gear" type="button" aria-expanded="false">설정</button>
@@ -106,6 +137,17 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
         <option value="1">1글자 (세로)</option>
       </select>
     </label>
+    <div class="lbl full">기간
+      <div class="seg" id="pmodes">
+        <button type="button" data-m="none">기간 없음</button>
+        <button type="button" data-m="open">시작일부터 완수까지</button>
+        <button type="button" data-m="fixed">시작일 ~ 끝날짜</button>
+      </div>
+      <div class="dates" id="pdates">
+        <label>시작일<input type="date" id="pStart"></label>
+        <label id="pEndWrap">끝날짜<input type="date" id="pEnd"></label>
+      </div>
+    </div>
     <div class="lbl full">색 테마
       <div class="swatches" id="swatches"></div>
     </div>
@@ -116,10 +158,15 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
       </div>
     </div>
     <div class="row full">
-      <button id="apply" type="button" class="on">글자 적용</button>
+      <button id="apply" type="button" class="on">글자·기간 적용</button>
       <button id="reset" type="button" class="danger">전부 지우기</button>
       <span class="note">어떤 글자든 항상 600칸(300시간)으로 맞춰져요. 글자를 바꿨다가 다시 돌아오면 그 글자의 기록이 이어져요. 색은 바로 바뀌고 기록에는 영향이 없어요.</span>
     </div>
+  </div>
+
+  <div class="donecard" id="doneCard" hidden>
+    <div><h2>완수했어요!</h2><p>300시간을 모두 채웠어요. <span id="doneMeta"></span></p></div>
+    <button type="button" class="saveImg on">사진으로 저장</button>
   </div>
 
   <div class="board" id="board" aria-label="창제표"></div>
@@ -130,8 +177,22 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
       <div class="hrs">창제 <b id="hrs">0시간</b> · 남은 <b id="left">300시간</b> · <b id="pct">0%</b></div>
     </div>
     <div class="bar"><i id="barfill"></i></div>
+    <div class="pace" id="pace" hidden></div>
+    <div class="tfoot"><button type="button" class="saveImg">사진으로 저장</button></div>
   </div>
   <div class="hint">칸을 누르면 칠해지고, 다시 누르면 지워져요. 꾹 누른 채 끌면 여러 칸을 한 번에 칠할 수 있어요.</div>
+  <div class="overlay" id="shot" hidden>
+    <div class="sheet" role="dialog" aria-label="사진 미리보기">
+      <div class="hd"><h2>사진 미리보기</h2><button type="button" id="shotClose">닫기</button></div>
+      <img id="shotImg" alt="창제표 사진">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn" id="shotDl" href="#" download="창제표.png">사진 저장</a>
+        <button type="button" id="shotShare" hidden>공유하기</button>
+      </div>
+      <p class="note">노션 안에서는 저장 버튼이 막힐 수 있어요. 그럴 땐 사진을 오른쪽 클릭하거나(컴퓨터) 길게 눌러서(폰) 저장하세요.</p>
+    </div>
+  </div>
+  <div class="toast" id="toast" hidden></div>
 </div>
 
 <script>
@@ -152,14 +213,30 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
     {name:'해바라기',fill:'#f2c230',stroke:'#c98a12'},
     {name:'먹',fill:'#5a6270',stroke:'#2b313b'}
   ];
-  let cfg=Object.assign({text:'청년약동',cols:2,fill:THEMES[0].fill,stroke:THEMES[0].stroke},store.get('cj:cfg',{}));
-  let filled=new Set(),total=0,history=[];
+  let cfg=Object.assign({text:'청년약동',cols:2,fill:THEMES[0].fill,stroke:THEMES[0].stroke,pmode:'none',pstart:'',pend:''},store.get('cj:cfg',{}));
+  let filled=new Set(),total=0,history=[],letters=[];
+  let stat={f:0,complete:false,doneAt:0};
   const key=()=>'cj:fill-outline:'+cfg.text;
+  const lastKey=()=>'cj:last:'+cfg.text; // when this board was last painted (completion date)
+
+  // dates are local calendar days, stored as YYYY-MM-DD
+  const pad=n=>String(n).padStart(2,'0');
+  const dstr=ms=>{const d=new Date(ms);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+  const todayStr=()=>dstr(Date.now());
+  const validD=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'');
+  const parseD=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+  const dayDiff=(a,b)=>Math.round((parseD(b)-parseD(a))/864e5);
+  const md=s=>{const d=parseD(s);return (d.getMonth()+1)+'.'+d.getDate()};
+  let toastT;
+  function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)}
 
   // ---------- colors ----------
   function applyColors(){
     const r=document.documentElement.style;
     r.setProperty('--fill',cfg.fill);r.setProperty('--stroke',cfg.stroke);
+    const lum=h=>{const n=parseInt(h.slice(1),16);return (0.299*(n>>16)+0.587*(n>>8&255)+0.114*(n&255))/255};
+    r.setProperty('--on-stroke',lum(cfg.stroke)>0.62?'#1d2622':'#ffffff');
+    r.setProperty('--on-fill',lum(cfg.fill)>0.62?'#1d2622':'#ffffff');
     $('cFill').value=cfg.fill;$('cStroke').value=cfg.stroke;
     document.querySelectorAll('.sw').forEach(b=>b.classList.toggle('on',b.dataset.f===cfg.fill&&b.dataset.s===cfg.stroke));
   }
@@ -225,7 +302,9 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
 
     const NS='http://www.w3.org/2000/svg';let idx=0;
     const el=(t,a)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e};
+    letters=[];
     chars.forEach((ch,ci)=>{
+      const rec={ch,n,w:wBest,live:[],spare:[]};letters.push(rec);
       const box=document.createElement('div');box.className='ch';
       const svg=el('svg',{viewBox:`0 0 ${n} ${n}`,role:'group','aria-label':ch});
       const defs=el('defs');
@@ -245,8 +324,8 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
       for(let r=0;r<n;r++)for(let c=0;c<n;c++){
         const v=covs[ci][r][c];if(v<=0)continue;
         if(live[ci][r][c]){
-          const rc=el('rect',{class:'c',x:c,y:r,width:1,height:1});rc.dataset.i=idx++;len++;grid.appendChild(rc);
-        }else grid.appendChild(el('rect',{class:'s',x:c,y:r,width:1,height:1}));
+          const rc=el('rect',{class:'c',x:c,y:r,width:1,height:1});rc.dataset.i=idx;rec.live.push({i:idx,r,c});idx++;len++;grid.appendChild(rc);
+        }else{grid.appendChild(el('rect',{class:'s',x:c,y:r,width:1,height:1}));rec.spare.push({r,c})}
       }
       svg.appendChild(grid);
       const cnt=document.createElement('span');cnt.className='cnt';cnt.dataset.from=first;cnt.dataset.len=len;
@@ -275,8 +354,141 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
       for(let i=a;i<a+l;i++)if(filled.has(i))k++;
       s.textContent=k+'/'+l;
     });
+    const complete=total>0&&f>=total;
+    stat={f,complete,doneAt:complete?(store.get(lastKey(),0)||Date.now()):0};
+    renderPeriod();
   }
-  const save=()=>store.set(key(),[...filled]);
+  const save=()=>{store.set(key(),[...filled]);store.set(lastKey(),Date.now())};
+
+  // ---------- period ----------
+  function periodInfo(){
+    const today=todayStr(),s=cfg.pstart,e=cfg.pend,m=cfg.pmode;
+    if(stat.complete){
+      const cd=dstr(stat.doneAt);
+      if(m!=='none'&&validD(s)){const d=Math.max(1,dayDiff(s,cd)+1);return{big:'완수',small:md(s)+' – '+md(cd)+' · '+d+'일',done:true}}
+      return{big:'완수',small:md(cd)+' 완수',done:true};
+    }
+    if(m==='fixed'&&validD(s)&&validD(e)){
+      const toS=dayDiff(today,s),toE=dayDiff(today,e);
+      return{big:toS>0?'시작 D-'+toS:toE<0?'기간 종료':toE===0?'D-DAY':'D-'+toE,small:md(s)+' – '+md(e),toS,toE};
+    }
+    if(m==='open'&&validD(s)){
+      const toS=dayDiff(today,s);
+      return toS>0?{big:'시작 D-'+toS,small:md(s)+'부터',toS}:{big:(1-toS)+'일째',small:md(s)+' 시작',toS};
+    }
+    return null;
+  }
+  function renderPeriod(){
+    const p=periodInfo();
+    $('period').hidden=!p;
+    if(p){$('pBig').textContent=p.big;$('pSmall').textContent=p.small;$('period').classList.toggle('done',!!p.done)}
+    let pace='';
+    if(p&&!stat.complete){
+      const left=total-stat.f;
+      if(cfg.pmode==='fixed'&&p.toS<=0&&p.toE>=0){const days=p.toE+1,per=Math.ceil(left/days);pace=`남은 ${days}일 동안 하루 ${per}칸(${fmt(per*MINS)})씩 칠하면 완수해요.`}
+      else if(cfg.pmode==='fixed'&&p.toE<0)pace=`기간이 끝났어요. ${left}칸(${fmt(left*MINS)})이 남았어요.`;
+      else if(cfg.pmode==='open'&&p.toS<=0){const days=1-p.toS,avg=stat.f/days;pace=`지금까지 하루 평균 ${avg.toFixed(1)}칸(${fmt(Math.round(avg*MINS))})씩 칠했어요.`}
+    }
+    $('pace').textContent=pace;$('pace').hidden=!pace;
+    $('doneCard').hidden=!stat.complete;
+    if(stat.complete)$('doneMeta').textContent=p?p.small:'';
+  }
+  setInterval(renderPeriod,5*60*1000);
+  let pm='none';
+  function setPm(m){
+    pm=m;document.querySelectorAll('#pmodes button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+    $('pdates').hidden=m==='none';$('pEndWrap').hidden=m!=='fixed';
+    if(m!=='none'&&!$('pStart').value)$('pStart').value=todayStr();
+  }
+  document.querySelectorAll('#pmodes button').forEach(b=>b.onclick=()=>setPm(b.dataset.m));
+
+  // ---------- save as picture ----------
+  function tint(src,color){
+    const c=document.createElement('canvas');c.width=src.width;c.height=src.height;
+    const g=c.getContext('2d');g.drawImage(src,0,0);g.globalCompositeOperation='source-in';g.fillStyle=color;g.fillRect(0,0,c.width,c.height);
+    return c;
+  }
+  function rrect(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+  let shotUrl='';
+  async function saveImage(){
+    if(!letters.length)return;
+    const btns=[...document.querySelectorAll('.saveImg')];btns.forEach(b=>b.disabled=true);
+    try{
+      const word=letters.map(l=>l.ch).join('');
+      await Promise.race([Promise.all([
+        document.fonts.load('400 60px "Black Han Sans"',word+'완수D-0123456789일째시작기간종료칸'),
+        document.fonts.load('400 20px "Gowun Dodum"','백만편 창제표 시간 저장')]),new Promise(r=>setTimeout(r,2500))]).catch(()=>{});
+      const cs=getComputedStyle(document.documentElement),V=k=>cs.getPropertyValue(k).trim();
+      const C={bg:V('--bg'),paper:V('--paper'),ink:V('--ink'),muted:V('--muted'),line:V('--line'),cell:V('--cell'),halo:V('--halo'),
+        stroke:cfg.stroke,fill:cfg.fill,onStroke:V('--on-stroke')||'#fff',onFill:V('--on-fill')||'#fff'};
+      const DISP='"Black Han Sans","Noto Sans KR",sans-serif',BODY='"Gowun Dodum","Noto Sans KR",sans-serif';
+      const Wd=1080,M=56,SC=2,gap=18;
+      const meas=document.createElement('canvas').getContext('2d');
+      const p=periodInfo();
+      meas.font='400 60px '+DISP;const tw=meas.measureText(word).width;
+      let bw=0,bigW=0;
+      if(p){meas.font='400 30px '+DISP;bigW=meas.measureText(p.big).width;meas.font='400 19px '+BODY;bw=bigW+(p.small?meas.measureText(p.small).width+12:0)+32}
+      const inline=p&&M+tw+18+bw<=Wd-M;
+      let y=M;const titleBase=y+56;y=titleBase+14;
+      let bx=M+tw+18,by=titleBase-40;
+      if(p&&!inline){bx=M;by=y+4;y+=56}
+      const subBase=y+24;y=subBase+30;
+      const cols=Math.min(cfg.cols,letters.length),rows=Math.ceil(letters.length/cols);
+      const L=Math.min(480,(Wd-2*M-gap*(cols-1))/cols),gridW=cols*L+gap*(cols-1),gx=(Wd-gridW)/2,gy=y;
+      y=gy+rows*L+(rows-1)*gap+34;
+      const numBase=y+40,barY=numBase+20,footBase=barY+14+46,H=footBase+M-16;
+
+      const cv=document.createElement('canvas');cv.width=Wd*SC;cv.height=Math.ceil(H*SC);
+      const g=cv.getContext('2d');g.scale(SC,SC);g.imageSmoothingQuality='high';
+      g.fillStyle=C.bg;g.fillRect(0,0,Wd,H);
+      g.fillStyle=C.stroke;g.font='400 60px '+DISP;g.fillText(word,M,titleBase);
+      if(p){
+        g.fillStyle=p.done?C.fill:C.stroke;rrect(g,bx,by,bw,48,14);g.fill();
+        g.fillStyle=p.done?C.onFill:C.onStroke;g.font='400 30px '+DISP;g.fillText(p.big,bx+16,by+35);
+        if(p.small){g.font='400 19px '+BODY;g.fillText(p.small,bx+16+bigW+12,by+33)}
+      }
+      g.fillStyle=C.muted;g.font='400 21px '+BODY;g.fillText('백만편 창제표 · 300시간',M,subBase);
+      letters.forEach((lt,k)=>{
+        const x=gx+(k%cols)*(L+gap),yy=gy+Math.floor(k/cols)*(L+gap);
+        const S=Math.ceil(L*SC/lt.n);
+        const inner=draw(lt.ch,lt.n,lt.w,0,S).cv;
+        g.drawImage(tint(draw(lt.ch,lt.n,lt.w,2*OUT+0.9,S).cv,C.halo),x,yy,L,L);
+        g.drawImage(tint(draw(lt.ch,lt.n,lt.w,2*OUT,S).cv,C.stroke),x,yy,L,L);
+        g.drawImage(tint(inner,C.cell),x,yy,L,L);
+        const lay=document.createElement('canvas');lay.width=lay.height=lt.n*S;
+        const q=lay.getContext('2d');q.fillStyle=C.fill;
+        lt.live.forEach(({i,r,c})=>{if(filled.has(i))q.fillRect(c*S,r*S,S,S)});
+        q.strokeStyle=C.line;q.lineWidth=Math.max(1,S*0.06);
+        lt.live.concat(lt.spare).forEach(({r,c})=>q.strokeRect(c*S,r*S,S,S));
+        q.globalCompositeOperation='destination-in';q.drawImage(inner,0,0);
+        g.drawImage(lay,x,yy,L,L);
+      });
+      g.fillStyle=C.ink;g.font='400 40px '+DISP;g.fillText(stat.f.toLocaleString()+' / '+total.toLocaleString()+'칸',M,numBase);
+      g.font='400 22px '+BODY;g.fillStyle=C.muted;g.textAlign='right';
+      g.fillText(fmt(stat.f*MINS)+' · '+Math.floor(total?stat.f/total*100:0)+'%',Wd-M,numBase);g.textAlign='left';
+      g.save();rrect(g,M,barY,Wd-2*M,14,7);g.clip();g.fillStyle=C.cell;g.fillRect(M,barY,Wd-2*M,14);
+      g.fillStyle=C.fill;g.fillRect(M,barY,(Wd-2*M)*(total?stat.f/total:0),14);g.restore();
+      g.strokeStyle=C.line;g.lineWidth=1;rrect(g,M+.5,barY+.5,Wd-2*M-1,13,7);g.stroke();
+      g.fillStyle=C.muted;g.font='400 16px '+BODY;g.fillText('백만편 창제표 · '+todayStr().replace(/-/g,'.')+' 저장',M,footBase);
+
+      const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
+      if(!blob)throw new Error('blob');
+      if(shotUrl)URL.revokeObjectURL(shotUrl);
+      shotUrl=URL.createObjectURL(blob);
+      const fname=word+'_창제표_'+todayStr()+'.png';
+      $('shotImg').src=shotUrl;$('shotDl').href=shotUrl;$('shotDl').download=fname;
+      let file=null;try{file=new File([blob],fname,{type:'image/png'})}catch(e){}
+      const canShare=!!(file&&navigator.canShare&&navigator.canShare({files:[file]})&&matchMedia('(pointer:coarse)').matches);
+      $('shotShare').hidden=!canShare;
+      $('shotShare').onclick=()=>navigator.share({files:[file],title:word+' 창제표'}).catch(()=>{});
+      $('shot').hidden=false;
+    }catch(e){toast('사진을 만들지 못했어요. 다시 해주세요.')}
+    finally{btns.forEach(b=>b.disabled=false)}
+  }
+  document.querySelectorAll('.saveImg').forEach(b=>b.onclick=saveImage);
+  $('shotClose').onclick=()=>{$('shot').hidden=true};
+  $('shot').addEventListener('click',e=>{if(e.target===$('shot'))$('shot').hidden=true});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')$('shot').hidden=true});
 
   // ---------- painting: click or drag ----------
   let painting=false,mode=true,stroke=[];
@@ -309,14 +521,19 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
     const s=$('settings');s.hidden=!s.hidden;
     $('gear').classList.toggle('on',!s.hidden);$('gear').setAttribute('aria-expanded',!s.hidden);
     $('txt').value=cfg.text;$('cols').value=cfg.cols;
+    $('pStart').value=cfg.pstart||'';$('pEnd').value=cfg.pend||'';setPm(cfg.pmode||'none');
   };
   function withFont(fn){
     if(!(document.fonts&&document.fonts.load))return fn();
     Promise.race([document.fonts.load('700 100px "Noto Sans KR"',cfg.text||'청'),new Promise(r=>setTimeout(r,2500))]).then(fn,fn);
   }
   $('apply').onclick=()=>{
+    const start=$('pStart').value,end=$('pEnd').value;
+    if(pm!=='none'&&!validD(start)){toast('시작일을 정해주세요.');return}
+    if(pm==='fixed'&&(!validD(end)||end<start)){toast('끝날짜는 시작일과 같거나 그 뒤여야 해요.');return}
     cfg.text=$('txt').value.trim()||'청년약동';cfg.cols=+$('cols').value;
-    store.set('cj:cfg',cfg);withFont(build);
+    cfg.pmode=pm;cfg.pstart=pm==='none'?'':start;cfg.pend=pm==='fixed'?end:'';
+    store.set('cj:cfg',cfg);withFont(build);toast('적용했어요.');
   };
   let armed=null;
   $('reset').onclick=()=>{
@@ -330,3 +547,6 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
   withFont(build);
 })();
 </script>
+
+</body>
+</html>
