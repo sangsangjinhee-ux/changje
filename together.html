@@ -115,6 +115,16 @@ button.danger.arm{background:#c4513f;color:#fff;border-color:#c4513f}
 .pc{width:30px;height:30px;padding:0;border-radius:50%;border:2px solid transparent;background:var(--c)}
 .pc.on{border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--paper)}
 .pcolors label{flex-direction:row;align-items:center;gap:6px}
+.pc.more{background:conic-gradient(#e8534a,#f2c230,#8cc84b,#2bb3c0,#5b6fd8,#d36fc6,#e8534a);border:2px solid var(--line)}
+.pc.more.on{border-color:var(--ink)}
+.spectrum{display:flex;flex-direction:column;gap:8px}
+.specWrap{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line);touch-action:none}
+#specCv{display:block;width:100%;height:150px;cursor:crosshair}
+.specMark{position:absolute;width:20px;height:20px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.45);transform:translate(-50%,-50%);pointer-events:none}
+.specRow{display:flex;align-items:center;gap:10px;font-size:.82rem;color:var(--muted);flex-wrap:wrap}
+.specRow label{flex-direction:row;align-items:center;gap:6px}
+.dot.lg{width:24px;height:24px;border:1px solid var(--line)}
+.settings input[type=password]{font-family:var(--body);font-size:.95rem;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;min-width:0}
 .donecard{border-color:var(--fill);border-width:2px}
 .dc-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .err{color:#c4513f;font-size:.82rem;min-height:1em}
@@ -205,7 +215,14 @@ a.btn{font-family:var(--body);font-size:.82rem;text-decoration:none;border-radiu
       <p>내가 칠한 칸은 이 색으로 보이고, 표 아래에 이름이 남아요. 이 기기에서만 기억해요.</p>
       <input id="nickIn" type="text" maxlength="20" placeholder="예: 지혜" autocomplete="nickname" required>
       <div class="pcolors" id="pcolors">
-        <label><input type="color" id="pcCustom"> 직접 고르기</label>
+        <button type="button" class="pc more" id="pcMore" aria-expanded="false" aria-label="더 많은 색 고르기" title="더 많은 색"></button>
+      </div>
+      <div class="spectrum" id="spec" hidden>
+        <div class="specWrap"><canvas id="specCv" width="720" height="180" aria-label="색상표"></canvas><i class="specMark" id="specMark" hidden></i></div>
+        <div class="specRow">
+          <i class="dot lg" id="specPrev"></i><b id="specHex"></b>
+          <label>정확한 색 입력 <input type="color" id="pcCustom"></label>
+        </div>
       </div>
       <p id="nickNote" hidden>바꾸면 내가 칠한 칸도 새 이름과 색으로 바뀌어요.</p>
       <div class="row">
@@ -253,6 +270,13 @@ a.btn{font-family:var(--body);font-size:.82rem;text-decoration:none;border-radiu
         <div class="pickers">
           <label><input type="color" id="cFill"> 기본 칠하는 색</label>
           <label><input type="color" id="cStroke"> 테두리 색</label>
+        </div>
+      </div>
+      <div class="lbl full">관리자 비밀번호 바꾸기
+        <div class="pickers">
+          <input type="password" id="npw" placeholder="새 비밀번호 (6자 이상)" autocomplete="new-password">
+          <input type="password" id="npw2" placeholder="한 번 더" autocomplete="new-password">
+          <button type="button" id="pwChange">비밀번호 바꾸기</button>
         </div>
       </div>
       <div class="row full">
@@ -403,13 +427,41 @@ a.btn{font-family:var(--body);font-size:.82rem;text-decoration:none;border-radiu
   PCOLORS.forEach(c=>{
     const b=document.createElement('button');b.type='button';b.className='pc';b.style.setProperty('--c',c);b.dataset.c=c;
     b.setAttribute('aria-label','색 '+c);b.onclick=()=>{pickColor=c;markPick()};
-    $('pcolors').insertBefore(b,$('pcolors').lastElementChild);
+    $('pcolors').insertBefore(b,$('pcMore'));
   });
   $('pcCustom').oninput=e=>{pickColor=e.target.value;markPick()};
   function markPick(){
-    document.querySelectorAll('.pc').forEach(b=>b.classList.toggle('on',b.dataset.c.toLowerCase()===pickColor.toLowerCase()));
+    document.querySelectorAll('.pc[data-c]').forEach(b=>b.classList.toggle('on',b.dataset.c.toLowerCase()===pickColor.toLowerCase()));
     $('pcCustom').value=pickColor;
+    $('specPrev').style.background=pickColor;$('specHex').textContent=pickColor.toUpperCase();
   }
+  // spectrum: hue left→right, light top → dark bottom; tap or drag to pick
+  const specCv=$('specCv');let specDown=false,specDrawn=false;
+  function drawSpec(){
+    const w=specCv.width,h=specCv.height,g=specCv.getContext('2d',{willReadFrequently:true});
+    const hg=g.createLinearGradient(0,0,w,0);for(let i=0;i<=12;i++)hg.addColorStop(i/12,`hsl(${i*30},85%,52%)`);
+    g.fillStyle=hg;g.fillRect(0,0,w,h);
+    const vg=g.createLinearGradient(0,0,0,h);
+    vg.addColorStop(0,'rgba(255,255,255,.92)');vg.addColorStop(.45,'rgba(255,255,255,0)');
+    vg.addColorStop(.55,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.78)');
+    g.fillStyle=vg;g.fillRect(0,0,w,h);specDrawn=true;
+  }
+  function pickAt(e){
+    const rc=specCv.getBoundingClientRect();
+    const x=Math.min(Math.max(e.clientX-rc.left,0),rc.width-1),y=Math.min(Math.max(e.clientY-rc.top,0),rc.height-1);
+    const d=specCv.getContext('2d').getImageData(Math.floor(x/rc.width*specCv.width),Math.floor(y/rc.height*specCv.height),1,1).data;
+    pickColor='#'+[d[0],d[1],d[2]].map(v=>v.toString(16).padStart(2,'0')).join('');
+    const m=$('specMark');m.style.left=x+'px';m.style.top=y+'px';m.hidden=false;markPick();
+  }
+  specCv.addEventListener('pointerdown',e=>{e.preventDefault();specDown=true;try{specCv.setPointerCapture(e.pointerId)}catch(_){}pickAt(e)});
+  specCv.addEventListener('pointermove',e=>{if(specDown)pickAt(e)});
+  specCv.addEventListener('pointerup',()=>{specDown=false});
+  specCv.addEventListener('pointercancel',()=>{specDown=false});
+  $('pcMore').onclick=()=>{
+    const sp=$('spec');sp.hidden=!sp.hidden;
+    $('pcMore').setAttribute('aria-expanded',!sp.hidden);$('pcMore').classList.toggle('on',!sp.hidden);
+    if(!sp.hidden&&!specDrawn)drawSpec();
+  };
   function showNick(){
     $('meRow').hidden=!nick||nickOpen;$('meName').textContent=nick;$('meDot').style.background=myColor;
     $('nickForm').hidden=!!nick&&!nickOpen;
@@ -869,6 +921,18 @@ a.btn{font-family:var(--body);font-size:.82rem;text-decoration:none;border-radiu
     try{await fdb.ref('channels/'+CID+'/config').set(next);toast('저장했어요. 모두의 화면에 반영돼요.')}
     catch(e){toast('저장하지 못했어요. 다시 로그인해 주세요.')}
     finally{$('apply').disabled=false}
+  };
+  $('pwChange').onclick=async()=>{
+    const a=$('npw').value,b=$('npw2').value;
+    if(a.length<6){toast('비밀번호는 6자 이상이어야 해요.');return}
+    if(a!==b){toast('두 비밀번호가 서로 달라요.');return}
+    const u=auth.currentUser;if(!u){toast('먼저 관리자 로그인을 해주세요.');return}
+    $('pwChange').disabled=true;
+    try{await u.updatePassword(a);$('npw').value='';$('npw2').value='';toast('비밀번호를 바꿨어요. 다음부터 새 비밀번호로 로그인하세요.')}
+    catch(e){const c=e&&e.code||'';
+      toast(c.includes('requires-recent-login')?'보안을 위해 로그아웃한 뒤 다시 로그인하고 바꿔주세요.'
+        :c.includes('weak-password')?'비밀번호가 너무 단순해요. 6자 이상으로 해주세요.':'비밀번호를 바꾸지 못했어요. 다시 해주세요.')}
+    finally{$('pwChange').disabled=false}
   };
   let armed=null;
   $('reset').onclick=()=>{
